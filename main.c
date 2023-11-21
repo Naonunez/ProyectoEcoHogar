@@ -2,7 +2,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+
+//Tdas
 #include "list.h"
+#include "heapMax.h"
+#include "heapMin.h"
+
 
 typedef struct{
     char Nombre[50];
@@ -17,8 +22,24 @@ typedef struct{
 
 }Dispositivos;
 
+typedef struct{
+    char Nombre[50];
+    char Descripcion[100];
+
+}Categoria;
+
+typedef struct{
+    int Consumo;
+    int Costo;
+    int Mes;
+    int Year;
+
+}Factura;
+
+
 void Inicializacion(){
     char Ingreso[50];
+    printf("\033[0;32m");
     printf("\n");
     printf("\n");
     printf(" ----------   ----------   ----------   ---    ---   ---------   ---------    ------------   ------------     \n");
@@ -34,7 +55,10 @@ void Inicializacion(){
     printf(" ----------   ----------   ----------   ---    ---   ---------   ---------    ---      ---   ---       ---    \n");
     printf("\n");
     printf("                                           1. Continuar\n");
+    printf("\033[0m");
+    printf("\033[0;31m");
     printf("                                           2. Salir\n");
+    printf("\033[0m");
     scanf("%s",Ingreso);
 
     while(true){
@@ -53,7 +77,7 @@ void Inicializacion(){
     
 }
 
-void IngresoDatosDispositivos(){
+void IngresoDatosDispositivos(List* ListaDispositivos){
     Dispositivos* Nuevo = (Dispositivos*) malloc (sizeof(Dispositivos));
 
     printf("Ingrese el nombre del dispositivo\n");
@@ -66,7 +90,7 @@ void IngresoDatosDispositivos(){
     Nuevo->Tipo[strcspn(Nuevo->Tipo, "\n")] = '\0';
 
     printf("Ingrese el consumo promedio del dispositivo \n");
-    scanf("%i", Nuevo->ConsumoPromedio);
+    scanf("%i", &Nuevo->ConsumoPromedio);
 
     printf("Ingrese la fecha de adquisición del dispositivo (DD /MM / AAAA) \n");
     fgets(Nuevo->FechaAd, sizeof(Nuevo->FechaAd), stdin);
@@ -87,7 +111,7 @@ void IngresoDatosDispositivos(){
     fgets(Nuevo->Modelo, sizeof(Nuevo->Modelo), stdin);
     Nuevo->Modelo[strcspn(Nuevo->Modelo, "\n")] = '\0';
 
-    //pushFront(Nuevo->ListaDispositivos, Nuevo);
+    pushFront(ListaDispositivos, Nuevo);
 
     printf("Dispositivo ingresado correctamente\n");
 
@@ -99,8 +123,10 @@ int main(){
     char opcion[50];
     char opcion1[50];
 
-
     Inicializacion();
+
+    List* ListaDispositivos = NULL;
+    ListaDispositivos = createList();
 
     while(true){
     
@@ -125,7 +151,7 @@ int main(){
             scanf("%s", opcion1);
 
             if (strcmp(opcion1, "1") == 0){
-                IngresoDatosDispositivos();
+                IngresoDatosDispositivos(ListaDispositivos);
                 break;
                 
             }
@@ -156,7 +182,7 @@ int main(){
                 //AnalisisConsumo
                 break;
             }
-            else if (strcmp(opcion1, "1") == 0){
+            else if (strcmp(opcion1, "2") == 0){
                 // VerRecomendaciones
                 break;
 
