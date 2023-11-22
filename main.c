@@ -77,6 +77,13 @@ void Inicializacion(){
     
 }
 
+void VolverMenu(){
+    char menu[50];
+
+    printf("Para volver al menu ingrese cualquier caracter\n");
+    scanf("%s", menu);
+}
+
 void IngresoDatosDispositivos(List* ListaDispositivos){
     Dispositivos* Nuevo = (Dispositivos*) malloc (sizeof(Dispositivos));
 
@@ -130,13 +137,14 @@ int main(){
 
     while(true){
     
-    printf("Menú\n");
-    printf("1. Registro de Datos de Consumo de Energía\n");
-    printf("2. Recomendaciones de Ahorro de Energía\n");
-    printf("3. Visualización de Facturas y Huella de Carbono\n");
-    printf("4. Funciones Avanzadas\n");
-    printf("5. Acerca de EcoHogar\n");
-    printf("6. Salir\n");
+    printf("Menu\n");
+    printf("1. Registro de datos de consumo de energia\n");
+    printf("2. Recomendaciones de ahorro de energia\n");
+    printf("3. Visualizacion de facturas y huella de carbono\n");
+    printf("4. Funciones avanzadas\n");
+    printf("5. Mis dispositivos\n");
+    printf("6. Acerca de EcoHogar\n");
+    printf("7. Salir\n");
 
     scanf("%s", opcion);
 
@@ -145,27 +153,30 @@ int main(){
 
         while(true){
             printf("1.Ingresar datos de dispositivos\n");
-            printf("2.Ingresar datos de categorías\n");
+            printf("2.Ingresar datos de categorias\n");
             printf("3.Ingresar datos de facturas\n");
 
             scanf("%s", opcion1);
 
             if (strcmp(opcion1, "1") == 0){
                 IngresoDatosDispositivos(ListaDispositivos);
+                VolverMenu();
                 break;
                 
             }
             else if (strcmp(opcion1, "2") == 0){
                //Ingreso Categorias
+               VolverMenu();
                break;
 
             }
             else if(strcmp(opcion1, "3") == 0){
                 //Ingreso Facturas
+                VolverMenu();
                 break;
             }
             else{
-                printf("Por favor, ingrese una opción válida\n");
+                printf("Por favor, ingrese una opcion valida\n");
                 scanf("%s", opcion1);
             }
         }
@@ -173,22 +184,24 @@ int main(){
     
     else if (strcmp(opcion, "2") == 0){
         while(true){
-            printf("1.Análisis de Consumo\n");
-            printf("2.Ver Recomendaciones\n");
+            printf("1.Analisis de consumo\n");
+            printf("2.Ver recomendaciones\n");
 
             scanf("%s", opcion1);
 
             if (strcmp(opcion1, "1") == 0){
                 //AnalisisConsumo
+                VolverMenu();
                 break;
             }
             else if (strcmp(opcion1, "2") == 0){
                 // VerRecomendaciones
+                VolverMenu();
                 break;
 
             }
             else{
-                printf("Por favor, ingrese una opción válida\n");
+                printf("Por favor, ingrese una opcion valida\n");
                 scanf("%s", opcion1);
             }
         }
@@ -196,22 +209,24 @@ int main(){
 
     else if (strcmp(opcion, "3") == 0){
         while(true){
-            printf("1.Ver Facturas\n");
-            printf("2.Calcular Huella de Carbono\n");
+            printf("1.Ver facturas\n");
+            printf("2.Calcular huella de carbono\n");
 
             scanf("%s", opcion1);
 
             if(strcmp(opcion1, "1") == 0){
                 //Facturas
+                VolverMenu();
                 break;
             }
             else if(strcmp(opcion1, "2") == 0){
                 //HuellaCarbono
+                VolverMenu();
                 break;
 
             }
             else{
-                printf("Por favor, ingrese una opción válida\n");
+                printf("Por favor, ingrese una opcion valida\n");
                 scanf("%s", opcion1); 
             }
         }
@@ -220,51 +235,55 @@ int main(){
 
     else if (strcmp(opcion, "4") == 0){
         while(true){
-            printf("1.Mostrar Dispositivos por Consumo Bajo\n");
-            printf("2.Mostrar Mayores Consumidores de Energía\n");
+            printf("1.Mostrar dispositivos por consumo bajo\n");
+            printf("2.Mostrar mayores consumidores de energía\n");
 
             scanf("%s", opcion1);
 
             if(strcmp(opcion1, "1") == 0){
                 //MenorConsumo
+                VolverMenu();
                 break;
             }
             else if(strcmp(opcion1, "2") == 0){
                 //MayorConsumo
+                VolverMenu();
                 break;
 
             }
             else{
-                printf("Por favor, ingrese una opción válida\n");
+                printf("Por favor, ingrese una opcion valida\n");
                 scanf("%s", opcion1); 
             }
         }
 
     }
-
     else if (strcmp(opcion, "5") == 0){
         while(true){
-            printf("1. ¿Cómo usar nuestra aplicación?\n");
-            printf("2. Nuestro Proposito\n");
-            printf("3. Acerca de nuestros creadores\n");
+            printf("1. Ver todos mis dispositivos\n");
+            printf("2. Ver dispositivos por categoria\n");
+            printf("3. Buscar dispositivo\n");
             scanf("%s", opcion1);
 
             if(strcmp(opcion1, "1") == 0){
-                //ComoUsar
+                //VerTodos
+                VolverMenu();
                 break;
             }
             else if(strcmp(opcion1, "2") == 0){
-                //proposito
+                //VerporCategoria
+                VolverMenu();
                 break;
 
             }
             else if(strcmp(opcion1, "3") == 0){
-                //AcercaNosotros
+                //BuscarDispositivos
+                VolverMenu();
                 break;
 
             }
             else{
-                printf("Por favor, ingrese una opción válida\n");
+                printf("Por favor, ingrese una opcion valida\n");
                 scanf("%s", opcion1); 
             }
         }
@@ -273,7 +292,39 @@ int main(){
 
     else if (strcmp(opcion, "6") == 0){
         while(true){
-            printf("Usted está saliendo de EcoHogar\n");
+            printf("1. ¿Como usar nuestra aplicacion?\n");
+            printf("2. Nuestro proposito\n");
+            printf("3. Acerca de nuestros creadores\n");
+            scanf("%s", opcion1);
+
+            if(strcmp(opcion1, "1") == 0){
+                //ComoUsar
+                VolverMenu();
+                break;
+            }
+            else if(strcmp(opcion1, "2") == 0){
+                //proposito
+                VolverMenu();
+                break;
+
+            }
+            else if(strcmp(opcion1, "3") == 0){
+                //AcercaNosotros
+                VolverMenu();
+                break;
+
+            }
+            else{
+                printf("Por favor, ingrese una opcion valida\n");
+                scanf("%s", opcion1); 
+            }
+        }
+
+    }
+
+    else if (strcmp(opcion, "7") == 0){
+        while(true){
+            printf("Usted esta saliendo de EcoHogar\n");
             printf("1. Confirmar\n");
             printf("2. Cancelar\n");
 
@@ -284,18 +335,19 @@ int main(){
             }
             else if(strcmp(opcion1, "2") == 0){
                 //cancelar
+                VolverMenu();
                 break;
 
             }
             else{
-                printf("Por favor, ingrese una opción válida\n");
+                printf("Por favor, ingrese una opcion valida\n");
                 scanf("%s", opcion1); 
             }
         }
 
     }
     else{
-        printf("Por favor, ingrese una opción válida\n");
+        printf("Por favor, ingrese una opcion valida\n");
         scanf("%s", opcion); 
     }
   }
