@@ -7,6 +7,7 @@ typedef struct Node Node;
 
 struct Node {
     const void * data;
+    List * nestedList; 
     Node * next;
     Node * prev;
 };
@@ -23,6 +24,7 @@ Node * createNode(const void * data) {
     Node * new = (Node *)malloc(sizeof(Node));
     assert(new != NULL);
     new->data = data;
+    new->nestedList = createList();
     new->prev = NULL;
     new->next = NULL;
     return new;

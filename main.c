@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <string.h>
+#include <assert.h>
+#include <strings.h>
 
 //Tdas
 #include "list.h"
@@ -11,22 +14,20 @@
 
 typedef struct{
     char Nombre[50];
-    char Tipo[50];
     int ConsumoPromedio;
     char FechaAd[50];
-    int HoraDiario[50];
+    int HoraDiario;
     char Potencia[50];
     char Fabricante[50];
     char Modelo[50];
-    List* ListaDispositivos;
 
 }Dispositivos;
 
-typedef struct{
-    char Nombre[50];
-    char Descripcion[100];
-
-}Categoria;
+typedef struct Categoria {
+    char nombre[50];
+    char descripcion[100];
+    List* listasDeListas;  
+} Categoria;
 
 typedef struct{
     int Consumo;
@@ -92,21 +93,19 @@ void IngresoDatosDispositivos(List* ListaDispositivos){
     fgets(Nuevo->Nombre, sizeof(Nuevo->Nombre), stdin);
     Nuevo->Nombre[strcspn(Nuevo->Nombre, "\n")] = '\0';
 
-    printf("Ingrese el tipo de dispositivo\n");
-    fgets(Nuevo->Tipo, sizeof(Nuevo->Tipo), stdin);
-    Nuevo->Tipo[strcspn(Nuevo->Tipo, "\n")] = '\0';
-
-    printf("Ingrese el consumo promedio del dispositivo \n");
+    printf("Ingrese en numeros el consumo promedio del dispositivo \n");
     scanf("%i", &Nuevo->ConsumoPromedio);
 
-    printf("Ingrese la fecha de adquisición del dispositivo (DD /MM / AAAA) \n");
+    printf("Ingrese la fecha de adquisicion del dispositivo (DD /MM / AAAA) \n");
+    getchar();
     fgets(Nuevo->FechaAd, sizeof(Nuevo->FechaAd), stdin);
     Nuevo->FechaAd[strcspn(Nuevo->FechaAd, "\n")] = '\0';
 
-    printf(" Ingrese el tiempo de uso diario del dispositivo en horas\n");
-    scanf("%i", Nuevo->HoraDiario);
+    printf("Ingrese el tiempo de uso diario del dispositivo en numero de horas\n");
+    scanf("%i", &Nuevo->HoraDiario);
 
     printf("Ingrese la potencia nominal del dispositivo \n");
+    getchar();
     fgets(Nuevo->Potencia, sizeof(Nuevo->Potencia), stdin);
     Nuevo->Potencia[strcspn(Nuevo->Potencia, "\n")] = '\0';
 
@@ -114,7 +113,7 @@ void IngresoDatosDispositivos(List* ListaDispositivos){
     fgets(Nuevo->Fabricante, sizeof(Nuevo->Fabricante), stdin);
     Nuevo->Fabricante[strcspn(Nuevo->Fabricante, "\n")] = '\0';
 
-    printf("Ingrese el número de modelo del dispositivo \n");
+    printf("Ingrese el numero de modelo del dispositivo \n");
     fgets(Nuevo->Modelo, sizeof(Nuevo->Modelo), stdin);
     Nuevo->Modelo[strcspn(Nuevo->Modelo, "\n")] = '\0';
 
@@ -124,16 +123,105 @@ void IngresoDatosDispositivos(List* ListaDispositivos){
 
 }
 
+Categoria* CrearCategoria() {
+    Categoria* nuevaCategoria = (Categoria*) malloc (sizeof(Categoria));
+    assert(nuevaCategoria != NULL);
+
+    printf("Ingrese el nombre de la categoria: \n");
+    getchar();
+    fgets(nuevaCategoria->nombre, sizeof(nuevaCategoria->nombre), stdin);
+    nuevaCategoria->nombre[strcspn(nuevaCategoria->nombre, "\n")] = '\0'; 
+
+    printf("Ingrese la descripcion de la categoria: \n");
+    fgets(nuevaCategoria->descripcion, sizeof(nuevaCategoria->descripcion), stdin);
+    nuevaCategoria->descripcion[strcspn(nuevaCategoria->descripcion, "\n")] = '\0'; 
+
+    nuevaCategoria->listasDeListas = createList();
+
+    VolverMenu();
+    return nuevaCategoria;
+    
+}
+    
+
+
+void AgregarACategoria(List* ListaCategorias, List* ListaDispositivos){
+    char nombreDispositivo[50];
+    char nombreCategoria[50];
+
+    printf("Ingrese el nombre de la categoria existente: \n");
+    getchar();
+    fgets(nombreCategoria, sizeof(nombreCategoria), stdin);
+    nombreCategoria[strcspn(nombreCategoria, "\n")] = '\0';
+
+    printf("Ingrese el nombre del dispositivo: \n");
+    fgets(nombreDispositivo, sizeof(nombreDispositivo), stdin);
+    nombreDispositivo[strcspn(nombreDispositivo, "\n")] = '\0';
+
+    Dispositivos* Disp = firstList(ListaDispositivos);
+
+    while(Disp != NULL && strcasecmp(Disp->Nombre, nombreDispositivo) != 0){
+        Disp = nextList(ListaDispositivos);
+    }
+
+    if(Disp == NULL) {
+        printf("Dispositivo no encontrado.\n");
+        return;
+    }
+
+    Categoria* Cat = firstList(ListaCategorias);
+
+    while (Cat != NULL && strcasecmp(Cat->nombre, nombreCategoria) != 0) {
+        Cat = nextList(ListaCategorias);
+    }
+
+    if(Cat == NULL) {
+        printf("Categoria no encontrada.\n");
+        return;
+    }
+
+    pushFront(Cat->listasDeListas,Disp);
+
+    printf("Dispositivo %s agregado correctamente a la categoria %s\n", (char*)Disp,(char*)Cat);
+    VolverMenu();
+
+}
+
+
+void VerTodosDispositivos(List *ListaDispositivos){
+    
+    Dispositivos *Datos = firstList(ListaDispositivos);
+    
+    if (Datos == NULL){
+        printf("No se han registrado dispositivos\n");
+        return;
+    }
+
+    printf("Dispositivos ingresados:\n");
+    while (Datos != NULL){
+        printf("Nombre: %s \n", Datos->Nombre);
+        printf("Marca: %s \n", Datos->Fabricante);
+        printf("Consumo promedio: %i \n\n", Datos->ConsumoPromedio);
+
+        Datos = nextList(ListaDispositivos);
+
+    }
+}
+
 
 
 int main(){
     char opcion[50];
     char opcion1[50];
+    char opcion2[50];
 
     Inicializacion();
 
     List* ListaDispositivos = NULL;
     ListaDispositivos = createList();
+
+    List* ListaCategorias = NULL;
+    ListaCategorias = createList();
 
     while(true){
     
@@ -165,7 +253,25 @@ int main(){
                 
             }
             else if (strcmp(opcion1, "2") == 0){
-               //Ingreso Categorias
+                while(true){
+                    printf("1. Crear nuevo categoria\n");
+                    printf("2. Agregar dispositivo a categoria ya existente\n");
+                    scanf("%s", opcion2);
+
+                    if (strcmp(opcion2, "1") == 0){
+                        pushFront(ListaCategorias,CrearCategoria());
+                        
+
+                    }
+                    else if (strcmp(opcion2, "2") == 0){
+                        AgregarACategoria(ListaCategorias,ListaDispositivos);
+                        
+                        break;
+
+                    }
+
+
+               }
                VolverMenu();
                break;
 
@@ -266,7 +372,7 @@ int main(){
             scanf("%s", opcion1);
 
             if(strcmp(opcion1, "1") == 0){
-                //VerTodos
+                VerTodosDispositivos(ListaDispositivos);
                 VolverMenu();
                 break;
             }
