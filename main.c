@@ -30,12 +30,14 @@ typedef struct Categoria {
 } Categoria;
 
 typedef struct{
-    int Consumo;
-    int Costo;
+    double Consumo;
+    int CostoTotal;
+    int CargoFijo;
     int Mes;
     int Year;
+    char NombreFac[50];
 
-}Factura;
+}Facturas;
 
 
 void Inicializacion(){
@@ -138,7 +140,6 @@ Categoria* CrearCategoria() {
 
     nuevaCategoria->listasDeListas = createList();
 
-    VolverMenu();
     return nuevaCategoria;
     
 }
@@ -183,7 +184,35 @@ void AgregarACategoria(List* ListaCategorias, List* ListaDispositivos){
     pushFront(Cat->listasDeListas,Disp);
 
     printf("Dispositivo %s agregado correctamente a la categoria %s\n", (char*)Disp,(char*)Cat);
-    VolverMenu();
+
+}
+
+void IngresarFacturas(List* ListaFacturas){
+    Facturas* Nueva = (Facturas*) malloc (sizeof(Facturas));
+
+    printf("Ingrese el nombre con el cual guardar la factura\n");
+    getchar();
+    fgets(Nueva->NombreFac, sizeof(Nueva->NombreFac), stdin);
+    Nueva->NombreFac[strcspn(Nueva->NombreFac, "\n")] = '\0';
+
+    printf("Ingrese el consumo en la factura\n");
+    scanf("%lf", &Nueva->Consumo);
+
+    printf("Ingrese el costo total en la factura\n");
+    scanf("%i", &Nueva->CostoTotal);
+
+    printf("Ingrese el cargo fijo de la factura\n");
+    scanf("%i", &Nueva->CargoFijo);
+
+    printf("Ingrese el mes de la factura\n");
+    scanf("%i", &Nueva->Mes);
+
+    printf("Ingrese el año en la factura\n");
+    scanf("%i", &Nueva->Year);
+
+    printf("Factura ingresada correctamente\n");
+    
+    pushFront(ListaFacturas,Nueva);
 
 }
 
@@ -223,6 +252,9 @@ int main(){
     List* ListaCategorias = NULL;
     ListaCategorias = createList();
 
+    List* ListaFacturas = NULL;
+    ListaFacturas = createList();
+
     while(true){
     
     printf("Menu\n");
@@ -259,14 +291,19 @@ int main(){
                     scanf("%s", opcion2);
 
                     if (strcmp(opcion2, "1") == 0){
-                        pushFront(ListaCategorias,CrearCategoria());
+                        pushFront(ListaCategorias, CrearCategoria());
+                        VolverMenu();
                         
 
                     }
                     else if (strcmp(opcion2, "2") == 0){
                         AgregarACategoria(ListaCategorias,ListaDispositivos);
-                        
+                        VolverMenu();
                         break;
+
+                    }
+                    else{
+                        printf("Por favor, ingrese una opcion valida\n\n");
 
                     }
 
@@ -277,13 +314,13 @@ int main(){
 
             }
             else if(strcmp(opcion1, "3") == 0){
-                //Ingreso Facturas
+                IngresarFacturas(ListaFacturas);
                 VolverMenu();
                 break;
             }
             else{
-                printf("Por favor, ingrese una opcion valida\n");
-                scanf("%s", opcion1);
+                printf("Por favor, ingrese una opcion valida\n\n");
+                
             }
         }
     }
@@ -307,8 +344,8 @@ int main(){
 
             }
             else{
-                printf("Por favor, ingrese una opcion valida\n");
-                scanf("%s", opcion1);
+                printf("Por favor, ingrese una opcion valida\n\n");
+    
             }
         }
     }
@@ -332,8 +369,7 @@ int main(){
 
             }
             else{
-                printf("Por favor, ingrese una opcion valida\n");
-                scanf("%s", opcion1); 
+                printf("Por favor, ingrese una opcion valida\n\n");
             }
         }
 
@@ -358,8 +394,8 @@ int main(){
 
             }
             else{
-                printf("Por favor, ingrese una opcion valida\n");
-                scanf("%s", opcion1); 
+                printf("Por favor, ingrese una opcion valida\n\n");
+                
             }
         }
 
@@ -389,8 +425,8 @@ int main(){
 
             }
             else{
-                printf("Por favor, ingrese una opcion valida\n");
-                scanf("%s", opcion1); 
+                printf("Por favor, ingrese una opcion valida\n\n");
+                
             }
         }
 
@@ -421,8 +457,7 @@ int main(){
 
             }
             else{
-                printf("Por favor, ingrese una opcion valida\n");
-                scanf("%s", opcion1); 
+                printf("Por favor, ingrese una opcion valida\n\n");
             }
         }
 
@@ -446,15 +481,13 @@ int main(){
 
             }
             else{
-                printf("Por favor, ingrese una opcion valida\n");
-                scanf("%s", opcion1); 
+                printf("Por favor, ingrese una opcion valida\n\n");
             }
         }
 
     }
     else{
-        printf("Por favor, ingrese una opcion valida\n");
-        scanf("%s", opcion); 
+        printf("Por favor, ingrese una opcion valida\n\n");
     }
   }
 
