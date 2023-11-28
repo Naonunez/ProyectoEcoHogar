@@ -95,7 +95,7 @@ void IngresoDatosDispositivos(List* ListaDispositivos){
     fgets(Nuevo->Nombre, sizeof(Nuevo->Nombre), stdin);
     Nuevo->Nombre[strcspn(Nuevo->Nombre, "\n")] = '\0';
 
-    printf("Ingrese en numeros el consumo promedio del dispositivo \n");
+    printf("Ingrese en kWh el consumo promedio del dispositivo \n");
     scanf("%i", &Nuevo->ConsumoPromedio);
 
     printf("Ingrese la fecha de adquisicion del dispositivo (DD /MM / AAAA) \n");
@@ -216,6 +216,36 @@ void IngresarFacturas(List* ListaFacturas){
 
 }
 
+void AnalizarConsumo(List* ListaDispositivos, List* ListaFacturas, MaxHeap* HeapMax, MinHeap* HeapMin){
+    double consumoTotal = 0.0;
+    printf("1\n");
+
+    Facturas* factura = firstList(ListaFacturas);
+
+    if(factura == NULL){
+        printf("Para hacer el analisis de consumo debes ingresar al menos una factura electrica\n");
+        return;
+    }
+
+    consumoTotal = factura->Consumo;
+    
+    printf("El consumo total de la ultima factura ingresada es: %.2lf kWh\n", consumoTotal);
+
+    Dispositivos* dispositivo = firstList(ListaDispositivos);
+
+    while (dispositivo != NULL) {
+        double porcentajeContribucion = (dispositivo->ConsumoPromedio / consumoTotal) * 100.0;
+        
+        insertarMax(HeapMax, porcentajeContribucion, (char*) dispositivo);
+        insertarMin(HeapMin, porcentajeContribucion, (char*) dispositivo);
+        
+        dispositivo = nextList(ListaDispositivos);
+
+    }
+
+
+}
+
 
 void VerTodosDispositivos(List *ListaDispositivos){
     
@@ -255,6 +285,10 @@ int main(){
     List* ListaFacturas = NULL;
     ListaFacturas = createList();
 
+    MaxHeap* HeapMax = createMaxHeap(1000);
+
+    MinHeap* HeapMin = createMinHeap(1000);
+
     while(true){
     
     printf("Menu\n");
@@ -275,6 +309,7 @@ int main(){
             printf("1.Ingresar datos de dispositivos\n");
             printf("2.Ingresar datos de categorias\n");
             printf("3.Ingresar datos de facturas\n");
+            printf("4.Atras\n");
 
             scanf("%s", opcion1);
 
@@ -282,42 +317,48 @@ int main(){
                 IngresoDatosDispositivos(ListaDispositivos);
                 VolverMenu();
                 break;
-                
             }
+
             else if (strcmp(opcion1, "2") == 0){
                 while(true){
                     printf("1. Crear nuevo categoria\n");
                     printf("2. Agregar dispositivo a categoria ya existente\n");
+                    printf("3.Atras\n");
                     scanf("%s", opcion2);
 
                     if (strcmp(opcion2, "1") == 0){
                         pushFront(ListaCategorias, CrearCategoria());
                         VolverMenu();
-                        
-
                     }
+
                     else if (strcmp(opcion2, "2") == 0){
                         AgregarACategoria(ListaCategorias,ListaDispositivos);
                         VolverMenu();
                         break;
-
                     }
+
+                    else if (strcmp(opcion2, "3") == 0){
+                        break;
+                    }
+
                     else{
                         printf("Por favor, ingrese una opcion valida\n\n");
-
                     }
-
-
                }
                VolverMenu();
                break;
-
             }
+
             else if(strcmp(opcion1, "3") == 0){
                 IngresarFacturas(ListaFacturas);
                 VolverMenu();
                 break;
             }
+
+            else if(strcmp(opcion1, "4") == 0){
+                return;
+            }
+
             else{
                 printf("Por favor, ingrese una opcion valida\n\n");
                 
@@ -329,23 +370,29 @@ int main(){
         while(true){
             printf("1.Analisis de consumo\n");
             printf("2.Ver recomendaciones\n");
+            printf("3.Atras\n");
 
             scanf("%s", opcion1);
 
             if (strcmp(opcion1, "1") == 0){
-                //AnalisisConsumo
+                printf("hola");
+                AnalizarConsumo(ListaDispositivos, ListaFacturas, HeapMax, HeapMin);
                 VolverMenu();
                 break;
             }
+
             else if (strcmp(opcion1, "2") == 0){
                 // VerRecomendaciones
                 VolverMenu();
                 break;
-
             }
+
+            else if(strcmp(opcion1, "3") == 0){
+                return;
+            }
+
             else{
                 printf("Por favor, ingrese una opcion valida\n\n");
-    
             }
         }
     }
@@ -354,6 +401,7 @@ int main(){
         while(true){
             printf("1.Ver facturas\n");
             printf("2.Calcular huella de carbono\n");
+            printf("3.Atras\n");
 
             scanf("%s", opcion1);
 
@@ -366,8 +414,12 @@ int main(){
                 //HuellaCarbono
                 VolverMenu();
                 break;
-
             }
+
+            else if(strcmp(opcion1, "3") == 0){
+                return;
+            }
+
             else{
                 printf("Por favor, ingrese una opcion valida\n\n");
             }
@@ -379,20 +431,26 @@ int main(){
         while(true){
             printf("1.Mostrar dispositivos por consumo bajo\n");
             printf("2.Mostrar mayores consumidores de energía\n");
+            printf("3.Atras\n");
 
             scanf("%s", opcion1);
 
             if(strcmp(opcion1, "1") == 0){
-                //MenorConsumo
+                Mostrar5Min(HeapMin);
                 VolverMenu();
                 break;
             }
-            else if(strcmp(opcion1, "2") == 0){
-                //MayorConsumo
-                VolverMenu();
-                break;
 
+            else if(strcmp(opcion1, "2") == 0){
+                Mostrar5Max(HeapMax);
+                VolverMenu();
+                break;
             }
+
+            else if(strcmp(opcion1, "3") == 0){
+                return;
+            }
+
             else{
                 printf("Por favor, ingrese una opcion valida\n\n");
                 
@@ -405,6 +463,7 @@ int main(){
             printf("1. Ver todos mis dispositivos\n");
             printf("2. Ver dispositivos por categoria\n");
             printf("3. Buscar dispositivo\n");
+            printf("4.Atras\n");
             scanf("%s", opcion1);
 
             if(strcmp(opcion1, "1") == 0){
@@ -412,18 +471,24 @@ int main(){
                 VolverMenu();
                 break;
             }
+
             else if(strcmp(opcion1, "2") == 0){
                 //VerporCategoria
                 VolverMenu();
                 break;
 
             }
+
             else if(strcmp(opcion1, "3") == 0){
                 //BuscarDispositivos
                 VolverMenu();
                 break;
-
             }
+
+            else if(strcmp(opcion1, "4") == 0){
+                return;
+            }
+
             else{
                 printf("Por favor, ingrese una opcion valida\n\n");
                 
@@ -437,6 +502,7 @@ int main(){
             printf("1. ¿Como usar nuestra aplicacion?\n");
             printf("2. Nuestro proposito\n");
             printf("3. Acerca de nuestros creadores\n");
+            printf("4.Atras\n");
             scanf("%s", opcion1);
 
             if(strcmp(opcion1, "1") == 0){
@@ -444,18 +510,23 @@ int main(){
                 VolverMenu();
                 break;
             }
+
             else if(strcmp(opcion1, "2") == 0){
                 //proposito
                 VolverMenu();
                 break;
-
             }
+
             else if(strcmp(opcion1, "3") == 0){
                 //AcercaNosotros
                 VolverMenu();
                 break;
-
             }
+
+            else if(strcmp(opcion1, "4") == 0){
+                return;
+            }
+
             else{
                 printf("Por favor, ingrese una opcion valida\n\n");
             }
@@ -475,7 +546,6 @@ int main(){
                 exit(0);
             }
             else if(strcmp(opcion1, "2") == 0){
-                //cancelar
                 VolverMenu();
                 break;
 

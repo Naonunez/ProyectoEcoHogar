@@ -1,94 +1,63 @@
-#include "heapMin.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "heapMin.h"
 
+
+
+// Función para crear un heap mínimo
 MinHeap* createMinHeap(int capacity) {
     MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
-    heap->array = (int*)malloc(sizeof(int) * capacity);
+    heap->arr = (HeapNodeMin*)malloc(sizeof(HeapNodeMin) * (size_t)capacity);
     heap->size = 0;
     heap->capacity = capacity;
     return heap;
 }
 
-void destroyMinHeap(MinHeap* heap) {
-    free(heap->array);
-    free(heap);
+// Función para mantener la propiedad del heap mínimo hacia arriba
+void heapifyUpMin(MinHeap* heap, int index) {
+    int parent = (index - 1) / 2;
+    while (index > 0 && heap->arr[index].value < heap->arr[parent].value) {
+        HeapNodeMin temp = heap->arr[index];
+        heap->arr[index] = heap->arr[parent];
+        heap->arr[parent] = temp;
+
+        index = parent;
+        parent = (index - 1) / 2;
+    }
 }
 
-void swap(int* a, int* b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
 
-void insertMinHeap(MinHeap* heap, int value) {
+// Función para insertar en el monticulo
+void insertarMin(MinHeap* heap, double value, const char* nombre) {
     if (heap->size == heap->capacity) {
-        // Heap is full
+        printf("El heap está lleno. No se puede insertar más elementos.\n");
         return;
     }
 
-    // Insert at the end
-    int index = heap->size;
-    heap->array[index] = value;
+    heap->arr[heap->size].value = value;
+
+    heap->arr[heap->size].nombre = (char*)malloc(strlen(nombre) + 1);
+    strcpy(heap->arr[heap->size].nombre, nombre);
+
+    heapifyUpMin(heap, heap->size);
+
     heap->size++;
-
-    // Fix the min heap property
-    while (index > 0 && heap->array[index] < heap->array[(index - 1) / 2]) {
-        swap(&heap->array[index], &heap->array[(index - 1) / 2]);
-        index = (index - 1) / 2;
-    }
 }
 
-int extractMin(MinHeap* heap) {
-    if (heap->size == 0) {
-        // Heap is empty
-        return -1;  // Or any appropriate value to indicate an error
+// Función para mostrar los 5 elementos mínimos del heap
+void Mostrar5Min(MinHeap* heap) {
+    int i;
+    printf("Tus 5 dispositivos que menos consumen son:\n");
+    for (i = 0; i < heap->size && i < 5; i++) {
+        printf("(%.2lf, %s\n) ", heap->arr[i].value, heap->arr[i].nombre);
     }
-
-    // Extract the minimum value
-    int minValue = heap->array[0];
-
-    // Replace the root with the last element
-    heap->array[0] = heap->array[heap->size - 1];
-    heap->size--;
-
-    // Fix the min heap property
-    heapify(heap, 0);
-
-    return minValue;
+    printf("\n");
 }
-
-void heapify(MinHeap* heap, int index) {
-    int smallest = index;
-    int leftChild = 2 * index + 1;
-    int rightChild = 2 * index + 2;
-
-    // Find the smallest among the root, left child, and right child
-    if (leftChild < heap->size && heap->array[leftChild] < heap->array[smallest]) {
-        smallest = leftChild;
+void liberarMinHeap(MinHeap* heap) {
+    for (int i = 0; i < heap->size; i++) {
+        free(heap->arr[i].nombre);
     }
-
-    if (rightChild < heap->size && heap->array[rightChild] < heap->array[smallest]) {
-        smallest = rightChild;
-    }
-
-    // If the smallest is not the root, swap and continue heapifying
-    if (smallest != index) {
-        swap(&heap->array[index], &heap->array[smallest]);
-        heapify(heap, smallest);
-    }
-}
-
-void decreaseKey(MinHeap* heap, int index, int newValue) {
-    if (index >= heap->size) {
-        // Invalid index
-        return;
-    }
-
-    heap->array[index] = newValue;
-
-    // Fix the min heap property
-    while (index > 0 && heap->array[index] < heap->array[(index - 1) / 2]) {
-        swap(&heap->array[index], &heap->array[(index - 1) / 2]);
-        index = (index - 1) / 2;
-    }
+    free(heap->arr);
+    free(heap);
 }
